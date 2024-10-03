@@ -1,33 +1,41 @@
 from django import forms
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 class RegisterForm(forms.Form):
-    username = forms.CharField()
-    email = forms.EmailField()
-    password = forms.PasswordInput()
-    password2 = forms.PasswordInput()
-
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        foo = User.objects.filter(username=username)
-        if foo.exists():
-            raise forms.ValidationError("Username already exists")
-        return username
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        foo = User.objects.filter(email=email)
-        if foo.exists():
-            raise forms.ValidationError("Email already exists")
-        return email
-
-    def clean(self):
-        data = self.cleaned_data
-        password = self.cleaned_data.get('password')
-        password2 = self.cleaned_data.get('password2')
-
-        if password2 != password:
-            raise forms.ValidationError("Passwords don't match")
-        return data
+    email = forms.EmailField(
+        label='Email Address',
+        max_length=100,
+        widget=forms.EmailInput(attrs={'placeholder': 'Email Address'})
+    )
+    password = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
+    )
+    first_name = forms.CharField(
+        label='First Name',
+        max_length=50,
+        widget=forms.TextInput(attrs={'placeholder': 'First Name'})
+    )
+    last_name = forms.CharField(
+        label='Last Name',
+        max_length=50,
+        required=False,  # Optional field
+        widget=forms.TextInput(attrs={'placeholder': 'Last Name'})
+    )
+    date_of_birth = forms.DateField(
+        label='Date of Birth',
+        widget=forms.SelectDateWidget(years=range(1900, 2025))
+    )
+    gender = forms.ChoiceField(
+        label='Gender',
+        choices=[('male', 'Male'), ('female', 'Female')],
+        widget=forms.RadioSelect
+    )
+    country = forms.ChoiceField(
+        label='Country',
+        choices=[('us', 'United States'), ('denmark', 'Denmark'), ('other', 'Other')],
+        widget=forms.Select(attrs={'class': 'country'})
+    )
+    captcha = forms.CharField(
+        label='Verify registration',
+        widget=forms.TextInput(attrs={'placeholder': 'Enter the characters from above.'})
+    )

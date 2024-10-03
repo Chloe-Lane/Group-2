@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friendster Profile</title>
+    <link rel="stylesheet" href="styles.css">
+<style>
+
+    /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+#top-bar {
+    background-color: #dde7f2;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.search-bar input {
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #aaa;
+}
+
+.top-links a {
+    text-decoration: none;
+    color: #333;
+    margin: 0 5px;
+}
+
+#container {
+    display: flex;
+    padding: 20px;
+}
+
+#left-column {
+    width: 70%;
+    padding-right: 20px;
+}
+
+#right-column {
+    width: 30%;
+}
+
+/* Profile Section */
+.profile-section {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 5px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.profile-details {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile-details li {
+    margin-bottom: 5px;
+}
+
+.profile-links a {
+    text-decoration: none;
+    color: #1a73e8;
+}
+
+/* Photo Gallery */
+.photo-gallery {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+
+.photos img {
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+}
+
+/* Friends Section */
+.friends-section {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.friends-list img {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+/* Advertisement Section */
+.advert-section {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+
+.ad-banner {
+    width: 100%;
+    height: auto;
+}
+
+</style>
+
+</head>
+<body>
+
+    <div id="top-bar">
+        <div class="logo">Friendster</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search Web / Friendster">
+        </div>
+        <div class="top-links">
+            <a href="#">Messages</a> |
+            <a href="#">Settings</a> |
+            <a href="#">Help</a> |
+            <a href="#">Log Out</a>
+        </div>
+    </div>
+
+    <div id="container">
+        <!-- Left Column -->
+        <div id="left-column">
+            <div class="profile-section">
+                {% load static %}
+                <img src="{% static 'images/example.jpg' %}" alt="Profile Picture" class="profile-pic">
+
+                <h2>Phoebe</h2>
+                <p>"I find studying addictive. HAHA"</p>
+                <ul class="profile-details">
+                    <li>Female, 18, Single</li>
+                    <li>Member Since: Aug 2004</li>
+                    <li>Location: Quezon City, PH</li>
+                    <li>College: Trinity University Of Asia</li>
+                </ul>
+                <div class="profile-links">
+                    <a href="#">View Messages</a> |
+                    <a href="#">Create Blog</a>
+                </div>
+            </div>
+
+            <div class="photo-gallery">
+                <h3>Phoebe's Photo Gallery</h3>
+                <div class="photos">
+                    <img src="photo1.jpg" alt="Photo 1">
+                    <img src="photo2.jpg" alt="Photo 2">
+                    <img src="photo3.jpg" alt="Photo 3">
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div id="right-column">
+            <div class="friends-section">
+                <h3>Phoebe's Friends</h3>
+                <div class="friends-list">
+                    <img src="friend1.jpg" alt="Friend 1">
+                    <img src="friend2.jpg" alt="Friend 2">
+                    <img src="friend3.jpg" alt="Friend 3">
+                </div>
+            </div>
+
+            <div class="advert-section">
+                <h3>Advertisement</h3>
+                <img src="ad.jpg" alt="Ad Banner" class="ad-banner">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

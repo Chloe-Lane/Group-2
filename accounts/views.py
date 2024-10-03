@@ -1,19 +1,21 @@
+from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import render
-from .forms import RegisterForm, User
-from django.http import HttpResponseRedirect
-from django.contrib.auth.models import User
+from .forms import RegisterForm
 
-def register_view(request):
-    form = RegisterForm(request.POST or None)
-    context = {
-        'form': form
-    }
 
-    if form.is_valid():
-    username = form.cleaned_data.get('username')
-    email = form.cleaned_data.get('email')
-    password = form.cleaned_data.get('password')
-    password2 = form.cleaned_data.get('password2')
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            # Perform your registration logic here.
+            messages.success(request, "Registration successful!")
+            return HttpResponse("Registration successful!")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = RegisterForm()
+    return render(request, 'auth/home.html', {'form': form})
 
-    newUser = User.objects.create_user(username, email, password)
-    return render(request, 'auth/register.html', context)
+
+

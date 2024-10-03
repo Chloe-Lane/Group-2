@@ -1,5 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView
+from django.contrib.auth.models import User
+from django.contrib import messages
 from .models import Tweet
 
 # Create your views here.
@@ -39,3 +41,34 @@ class TweetDetailView(DetailView):
         pk=self.kwargs.get('pk')
         print(pk)
         return Tweet.object.get(id=pk)
+
+def home(request):
+    return render(request, 'auth/home.html')
+
+
+def register(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+
+        if password1 != password2:
+            messages.error(request, "Passwords do not match.")
+            return redirect('register')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username is already taken.")
+            return redirect('register')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email is already registered.")
+            return redirect('register')
+
+        # If everything is fine, create a new user
+        user = User.objects.create_user(username=username, email=email, password=password1)
+        user.save()
+        messages.success(request, "Account created successfully!")
+        return redirect('home')
+
+    return render(request, 'register.html')
