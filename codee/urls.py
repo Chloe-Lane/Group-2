@@ -20,25 +20,22 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from tweets.views import home
 from accounts import views as account_views
-from . import views
-from .views import page_view
+from .views import home, login_view, custom_logout, page_view, generate_captcha
 
 # Import View
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
+    path('login/', login_view, name='login'),
     path('tweet/', include('tweets.urls')),
     path('accounts/', include('accounts.urls')),
     path('register/', account_views.register, name='register'),
-    path('register/', views.register_view, name='register_view_name'),
-    path('login/', views.login_view, name='login_view_name'),
-    path('page/', views.page_view, name='page_view_name'),
+    path('page/<str:first_name>/<str:last_name>/', page_view, name='page'),
+    path('logout/', custom_logout, name='logout'),
     path('captcha/', include('captcha.urls')),
-
-
+    path('generate_captcha/', generate_captcha, name='generate_captcha'),
 
 ]
 

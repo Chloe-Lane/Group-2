@@ -1,5 +1,7 @@
 from django import forms
 from captcha.fields import CaptchaField
+from django.contrib.auth.models import User
+
 
 
 class RegistrationForm(forms.Form):
@@ -14,5 +16,4 @@ class RegistrationForm(forms.Form):
     country = forms.ChoiceField(choices=[...])  # add your countries here
     captcha = CaptchaField()  # Add this line for CAPTCHA
 
-class RegistrationForm:
-    pass
+

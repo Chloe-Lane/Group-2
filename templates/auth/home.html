@@ -114,13 +114,18 @@
         }
 
         .captcha img {
-            display: block;
+
+            width: 400px; /* Baguhin ito ayon sa gusto mong lapad */
+            height: 100px; /* Baguhin ito ayon sa gusto mong taas */
             margin-bottom: 10px; /* Space between image and input field */
+            margin-left: 5px;
+            margin-top: 5px; /* Space above the image */
+
         }
 
         .captcha-input-container {
             display: flex;
-            align-items: center; /* Aligns input and text vertically */
+
         }
 
         .captcha-input {
@@ -246,7 +251,7 @@
     <div class="form-container">
         <h2>Join Friendster</h2>
 
-        <form method="post" action="{% url 'login_view_name' %}">
+        <form method="post" action="{% url 'home' %}">
             {% csrf_token %}
             {{ form.as_p }}
             <table>
@@ -464,7 +469,7 @@
                         <td>Verify registration:</td>
                         <td>
                             <div class="captcha">
-                                <img src="https://via.placeholder.com/250x80?text=CAPTCHA" alt="CAPTCHA">
+                                <img src="{% url 'generate_captcha' %}" alt="CAPTCHA" id="captcha-image" >
                                 <div class="captcha-input-container">
                                     <input type="text" name="captcha" class="captcha-input" required>
                                     <span class="captcha-text">Enter the characters from above</span>
@@ -477,7 +482,9 @@
                     </tr>
                 </table>
             </div>
-            
+                {% if error %}
+                    <p style="color:red;">{{ error }}</p>  <!-- Display error message -->
+                {% endif %}
             <button type="submit">Register</button>
         </form>
 </div>
@@ -496,7 +503,7 @@
     </div>
 
         <div class="login-text">
-            <p>Already a member? <a href="{% url 'login_view_name' %}">Log In</a></p>
+            <p>Already a member? <a href="{% url 'login' %}">Log In</a></p>
         </div>
 
 </div>

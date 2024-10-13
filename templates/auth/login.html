@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,20 +10,21 @@
 
 <div class="container">
     <h2>Log In to Friendster</h2>
-    <form method="post" action="{% url 'page_view_name' %}"> <!-- Redirect to login_view_name -->
+
+    <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
-        <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email" required>
-    
+        <label for="email">Email:</label>
+        <input type="email" name="email" required>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-    
-        <button type="submit">Log In</button>
+        <input type="password" name="password" required>
         
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        
+        <button type="submit">Login</button>
     </form>
     <p>Don't have an account? <a href="{% url 'home' %}">Register here</a></p>
-    
-
 </div>
 
 </body>

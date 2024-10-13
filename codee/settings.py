@@ -118,6 +118,12 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'success',
 }
 
+LOGOUT_REDIRECT_URL = 'login'
+
+CAPTCHA_FONT_SIZE = 80  # Palakihin ang font size
+CAPTCHA_IMAGE_SIZE = (400, 150)  # Palakihin ang size ng image
+
+AUTH_USER_MODEL = 'auth.User'  # Default Django User model
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

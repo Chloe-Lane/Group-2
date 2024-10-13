@@ -1,85 +1,123 @@
+import string
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 from .forms import RegistrationForm
-from django.contrib.auth import authenticate, login as auth_login, login
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages
-from django.urls import reverse
+import random
+from PIL import Image, ImageDraw, ImageFont
+from django.http import HttpResponse
+
+def generate_captcha(request):
+    captcha_text = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    request.session['captcha'] = captcha_text  # Save the CAPTCHA text in the session
+
+    # Create CAPTCHA image
+    img = Image.new('RGB', (250, 80), color='white')
+    d = ImageDraw.Draw(img)
+
+    # Set font size and load a font
+    font_size = 30  # Increase font size here
+    try:
+        # Load a font (you may need to provide the correct path to a .ttf file)
+        font = ImageFont.truetype("arial.ttf", font_size)  # Adjust font size and type as needed
+    except IOError:
+        font = ImageFont.load_default()  # Fallback to default font if specific font cannot be loaded
+
+    # Draw the text with the specified font
+    d.text((10, 20), captcha_text, fill=(0, 0, 0), font=font)
+
+    response = HttpResponse(content_type="image/png")
+    img.save(response, "PNG")
+    return response
+
+
+last_registered_email = ""
+last_registered_password = ""
+last_registered_first_name = ""
+last_registered_last_name = ""
+
 
 def home(request):
-    return render(request, 'auth/home.html')  # Render the appropriate template
+    global last_registered_email, last_registered_password, last_registered_first_name, last_registered_last_name, hide_last_name
 
-def register(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            # Handle successful registration
-            return redirect('success_page')
-        else:
-            # If the form is invalid, including CAPTCHA, it will regenerate a new CAPTCHA image automatically.
-            pass
-    else:
-        form = RegistrationForm()
-    return render(request, 'auth/home.html', {'form': form})
+        last_registered_email = request.POST['email']
+        last_registered_password = request.POST['password']
+        last_registered_first_name = request.POST['first_name']  # Capture first name
+        last_registered_last_name = request.POST['last_name']  # Capture last name
 
+        # Check if the "hide last name" checkbox is checked
+        hide_last_name = request.POST.get('hide_last_name') is not None  # Set to True if checked, False otherwise
+        request.session['hide_last_name'] = hide_last_name  # Store in session
 
-def register(request):
-    if request.method == "POST":
-        email = request.POST['email']
-        password = request.POST['password']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
+        username = last_registered_email.split('@')[0]  # Extract the username from the email
 
-        try:
-            user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name,
-                                            last_name=last_name)
-            user.save()
-            messages.success(request, 'Registration successful! You can now log in.')
-            return redirect('login_view_name')  # Redirect to login page after successful registration
-        except Exception as e:
-            messages.error(request, str(e))
+        # Check if the username already exists
+        while User.objects.filter(username=username).exists():
+            username += str(random.randint(1, 1000))  # Append a random number if the username exists
+
+        # Create a new user with the provided email, password, and username
+        User.objects.create_user(username=username, email=last_registered_email, password=last_registered_password)
+
+        # Redirect to the login page after registration
+        return redirect('login')
 
     return render(request, 'auth/home.html')
 
-def register_view(request):
+
+def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()  # Save the new user
-            login(request, user)  # Log in the user
-            return redirect('login_view_name')  # Redirect to the login page
-    else:
-        form = UserCreationForm()
-    return render(request, 'auth/home.html', {'form': form})
+        # Get form data and CAPTCHA input
+        captcha_input = request.POST.get('captcha')
+        captcha_session = request.session.get('captcha')
+
+        # Verify CAPTCHA
+        if captcha_input == captcha_session:
+            # Handle successful CAPTCHA verification
+            # You can add your user registration logic here
+            return redirect('login')  # Redirect to login or another page after registration
+        else:
+            # Handle invalid CAPTCHA
+            error_message = 'Captcha verification failed, try again!'
+            # Regenerate the CAPTCHA
+            return render(request, 'auth/home.html', {'error': error_message})
+
+    # Render registration page if not a POST request
+    return render(request, 'auth/home.html')
 
 
 def login_view(request):
+    global last_registered_email, last_registered_password, last_registered_first_name, last_registered_last_name  # Access the global variables
+
+    error = None  # Initialize the error variable
+
     if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(request, username=email, password=password)  # Adjust based on your User model
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
-        if user is not None:
-            auth_login(request, user)
-            return redirect('page_view_name')  # Redirect to the page view
+        # Check if the email and password match the last registered user's credentials
+        if email == last_registered_email and password == last_registered_password:
+            return redirect('page', first_name=last_registered_first_name, last_name=last_registered_last_name)  # Pass parameters
         else:
-            messages.error(request, 'Invalid email or password.')
+            error = 'Invalid email or password'  # Set error if credentials don't match
 
-    return render(request, 'auth/login.html')
+    # Render the login page with the error message if it exists
+    return render(request, 'auth/login.html', {'error': error})
 
 
-def page_view(request):
-    return render(request, 'homep/page.html')  # Adjust path if necessary
+def custom_logout(request):
+    logout(request)  # Log the user out
+    return redirect('login')  # Redirect to the login page
 
-def register_view(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            # Process the registration (e.g., save user data)
-            return redirect('success_view_name')  # Redirect on successful registration
-        else:
-            # If CAPTCHA or other validation fails, re-render the form with errors
-            return render(request, 'auth/home.html', {'form': form})
-    else:
-        form = RegistrationForm()
-    return render(request, 'auth/home.html', {'form': form})
+def page_view(request, first_name, last_name):
+    hide_last_name = request.session.get('hide_last_name', False)  # Retrieve from session or use a default
+
+    return render(request, 'homep/page.html', {
+        'first_name': first_name,
+        'last_name': last_name,
+        'hide_last_name': hide_last_name,
+    })
+
+
+import time
+timestamp = int(time.time())
