@@ -20,8 +20,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from accounts import views as account_views
 from .views import home, login_view, custom_logout, page_view, generate_captcha
+from .views import *
+from django.contrib.auth import views as auth_views
+
+# Import View
 
 # Import View
 
@@ -30,13 +33,15 @@ urlpatterns = [
     path('', home, name='home'),
     path('login/', login_view, name='login'),
     path('tweet/', include('tweets.urls')),
-    path('accounts/', include('accounts.urls')),
-    path('register/', account_views.register, name='register'),
     path('page/<str:first_name>/<str:last_name>/', page_view, name='page'),
     path('logout/', custom_logout, name='logout'),
     path('captcha/', include('captcha.urls')),
     path('generate_captcha/', generate_captcha, name='generate_captcha'),
+    path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
 
+    path('password-reset-confirm/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(template_name='auth/password_reset_confirm.html'),
+         name='password_reset_confirm'),
 ]
 
 if settings.DEBUG:

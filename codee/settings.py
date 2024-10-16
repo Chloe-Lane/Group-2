@@ -123,6 +123,15 @@ LOGOUT_REDIRECT_URL = 'login'
 CAPTCHA_FONT_SIZE = 80  # Palakihin ang font size
 CAPTCHA_IMAGE_SIZE = (400, 150)  # Palakihin ang size ng image
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'chloejose666@gmail.com'  # Palitan ito ng iyong email
+EMAIL_HOST_PASSWORD = '123'
+
 AUTH_USER_MODEL = 'auth.User'  # Default Django User model
 
 # Internationalization

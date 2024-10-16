@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #ececec;
             margin: 0;
             padding: 0;
             display: flex;
@@ -21,7 +21,7 @@
             justify-content: space-between;
             align-items: flex-start;
             width: 1000px; /* Adjust width as needed to accommodate both elements */
-            background-color: #fff;
+            background-color: #F5F5F5;
             padding: 20px;
             border: 1px solid #ccc;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -250,7 +250,11 @@
 <div class="container">
     <div class="form-container">
         <h2>Join Friendster</h2>
-
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
         <form method="post" action="{% url 'home' %}">
             {% csrf_token %}
             {{ form.as_p }}
@@ -482,11 +486,14 @@
                     </tr>
                 </table>
             </div>
-                {% if error %}
-                    <p style="color:red;">{{ error }}</p>  <!-- Display error message -->
-                {% endif %}
+
             <button type="submit">Register</button>
+            
+                {% if error %}
+                    <p style="color: red;">{{ error }}</p>
+                {% endif %}
         </form>
+
 </div>
 
     <div class="info-box">

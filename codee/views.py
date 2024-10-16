@@ -1,11 +1,16 @@
-import string
+import string, random
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
-from .forms import RegistrationForm
-import random
 from PIL import Image, ImageDraw, ImageFont
 from django.http import HttpResponse
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+
+from django.contrib import messages
+
+
 
 def generate_captcha(request):
     captcha_text = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
@@ -41,48 +46,31 @@ def home(request):
     global last_registered_email, last_registered_password, last_registered_first_name, last_registered_last_name, hide_last_name
 
     if request.method == 'POST':
-        last_registered_email = request.POST['email']
-        last_registered_password = request.POST['password']
-        last_registered_first_name = request.POST['first_name']  # Capture first name
-        last_registered_last_name = request.POST['last_name']  # Capture last name
-
-        # Check if the "hide last name" checkbox is checked
-        hide_last_name = request.POST.get('hide_last_name') is not None  # Set to True if checked, False otherwise
-        request.session['hide_last_name'] = hide_last_name  # Store in session
-
-        username = last_registered_email.split('@')[0]  # Extract the username from the email
-
-        # Check if the username already exists
-        while User.objects.filter(username=username).exists():
-            username += str(random.randint(1, 1000))  # Append a random number if the username exists
-
-        # Create a new user with the provided email, password, and username
-        User.objects.create_user(username=username, email=last_registered_email, password=last_registered_password)
-
-        # Redirect to the login page after registration
-        return redirect('login')
-
-    return render(request, 'auth/home.html')
-
-
-def register(request):
-    if request.method == 'POST':
-        # Get form data and CAPTCHA input
-        captcha_input = request.POST.get('captcha')
-        captcha_session = request.session.get('captcha')
-
-        # Verify CAPTCHA
-        if captcha_input == captcha_session:
-            # Handle successful CAPTCHA verification
-            # You can add your user registration logic here
-            return redirect('login')  # Redirect to login or another page after registration
+        if request.POST['captcha'] != request.session['captcha']:
+            messages.error(request, 'INvalid captcha')
+            return render(request, 'auth/home.html')  # Re-render the page with error message
         else:
-            # Handle invalid CAPTCHA
-            error_message = 'Captcha verification failed, try again!'
-            # Regenerate the CAPTCHA
-            return render(request, 'auth/home.html', {'error': error_message})
+            last_registered_email = request.POST['email']
+            last_registered_password = request.POST['password']
+            last_registered_first_name = request.POST['first_name']  # Capture first name
+            last_registered_last_name = request.POST['last_name']  # Capture last name
 
-    # Render registration page if not a POST request
+            # Check if the "hide last name" checkbox is checked
+            hide_last_name = request.POST.get('hide_last_name') is not None  # Set to True if checked, False otherwise
+            request.session['hide_last_name'] = hide_last_name  # Store in session
+
+            username = last_registered_email.split('@')[0]  # Extract the username from the email
+
+            # Check if the username already exists
+            while User.objects.filter(username=username).exists():
+                username += str(random.randint(1, 1000))  # Append a random number if the username exists
+
+            # Create a new user with the provided email, password, and username
+            User.objects.create_user(username=username, email=last_registered_email, password=last_registered_password)
+
+            # Redirect to the login page after registration
+            return redirect('login')
+
     return render(request, 'auth/home.html')
 
 
@@ -121,3 +109,14 @@ def page_view(request, first_name, last_name):
 
 import time
 timestamp = int(time.time())
+
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'auth/password_reset.html'
+    email_template_name = 'users/password_reset_email.html'
+    subject_template_name = 'users/password_reset_subject'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('users-home')
