@@ -189,34 +189,34 @@ document.getElementById('profile-name').style.color = preferences.fontColor;
 document.getElementById('font-color').value = preferences.fontColor;
 }
 if (preferences.textColor) {
-document.querySelectorAll('#profile-quote, #profile-details, #member-since, #location, #college, #gallery-title, #friends-title').forEach(element => {
-element.style.color = preferences.textColor;
+    document.querySelectorAll('#profile-quote, #profile-details, #member-since, #location, #college, #gallery-title, #friends-title').forEach(element => {
+    element.style.color = preferences.textColor;
 });
-document.getElementById('text-color').value = preferences.textColor;
+    document.getElementById('text-color').value = preferences.textColor;
 }
 if (preferences.profilePic) {
-document.getElementById('profile-image').src = preferences.profilePic;
-document.getElementById('profile-pic').value = preferences.profilePic;
+    document.getElementById('profile-image').src = preferences.profilePic;
+    document.getElementById('profile-pic').value = preferences.profilePic;
 }
 };
 
 function changeBackgroundColor(event) {
-document.body.style.backgroundColor = event.target.value;
+    document.body.style.backgroundColor = event.target.value;
 }
 
 function changeFontStyle(event) {
-document.getElementById('profile-name').style.fontFamily = event.target.value;
+    document.getElementById('profile-name').style.fontFamily = event.target.value;
 }
 
 function changeFontColor(event) {
-document.getElementById('profile-name').style.color = event.target.value;
+    document.getElementById('profile-name').style.color = event.target.value;
 }
 
 function changeTextColor(event) {
-const color = event.target.value;
-document.querySelectorAll('#profile-quote, #profile-details, #member-since, #location, #college, #gallery-title, #friends-title').forEach(element => {
-element.style.color = color;
-});
+    const color = event.target.value;
+    document.querySelectorAll('#profile-quote, #profile-details, #member-since, #location, #college, #gallery-title, #friends-title').forEach(element => {
+    element.style.color = color;
+    });
 }
 
 function updateProfilePicture(event) {

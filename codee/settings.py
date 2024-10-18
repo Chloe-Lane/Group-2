@@ -15,7 +15,7 @@ from pathlib import Path
 
 from django.contrib import admin
 from django.urls import path
-
+from django.conf import settings
 
 
 from django.contrib.messages import constants as messages
@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'codee',
     'tweets',
-    'accounts',
     'captcha',
 ]
 
@@ -125,11 +124,11 @@ CAPTCHA_IMAGE_SIZE = (400, 150)  # Palakihin ang size ng image
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Use appropriate SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'chloejose666@gmail.com'  # Palitan ito ng iyong email
+EMAIL_HOST_USER = 'chloejose666@gmail.com'  # Your email address
 EMAIL_HOST_PASSWORD = '123'
 
 AUTH_USER_MODEL = 'auth.User'  # Default Django User model
@@ -156,3 +155,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TWILIO_ACCOUNT_SID = 'AC2b73693c4aaa9c7999405b793a7f49b9'
+TWILIO_AUTH_TOKEN = 'cd5eccb364449075bb4ead648b156801'
+TWILIO_VERIFY_SERVICE_SID = 'VA26390ea7fd9651fc23d9409f86842bb6'

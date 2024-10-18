@@ -20,7 +20,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home, login_view, custom_logout, page_view, generate_captcha
+from .views import (
+    home,
+    login_view,
+    custom_logout,
+    page_view,
+    generate_captcha,
+    forgot_password_view,
+    send_reset_code,
+    reset_password,
+    send_verification_code,
+    verify_code,
+)
 from .views import *
 from django.contrib.auth import views as auth_views
 
@@ -37,11 +48,12 @@ urlpatterns = [
     path('logout/', custom_logout, name='logout'),
     path('captcha/', include('captcha.urls')),
     path('generate_captcha/', generate_captcha, name='generate_captcha'),
-    path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
-
-    path('password-reset-confirm/<uidb64>/<token>/',
-         auth_views.PasswordResetConfirmView.as_view(template_name='auth/password_reset_confirm.html'),
-         name='password_reset_confirm'),
+    path('forgot-password/', forgot_password_view, name='forgot_password'),
+    path('send-reset-code/', send_reset_code, name='send_reset_code'),
+    path('reset-password/<uidb64>/<token>/', reset_password, name='reset_password'),
+    path('forgot-password/', send_reset_code, name='send_reset_code'),
+    path('send-verification-code/', send_verification_code, name='send_verification_code'),
+    path('verify-code/', verify_code, name='verify_code'),
 ]
 
 if settings.DEBUG:
