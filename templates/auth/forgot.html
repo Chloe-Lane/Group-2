@@ -30,21 +30,20 @@
             margin-top: 20px;
         }
         .form-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 15px; /* Space between form groups */
+            text-align: center; /* Center the label and input */
         }
         label {
-            flex: 1;
-            margin-right: 10px;
-            text-align: left;
+            display: block; /* Makes the label a block element */
+            margin-bottom: 5px; /* Space between label and input */
+            text-align: center; /* Center aligns the text */
         }
         input {
-            flex: 4;
+            width: calc(100% - 16px); /* Full width with padding adjustment */
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 3px;
+            text-align: center; /* Center the text inside the input */
         }
         button {
             width: 100%;
@@ -66,6 +65,10 @@
             color: #435E86;
             text-decoration: none;
         }
+        .warning {
+            color: red; /* Set text color to red */
+            font-weight: bold; /* Make text bold */
+        }
     </style>
 </head>
 <body>
@@ -76,14 +79,15 @@
     <form method="POST" action="{% url 'forgot_password' %}">
         {% csrf_token %}
         <div class="form-group">
-            <label for="security-question">Who is your Objor Subject Teacher?</label>
-            <input type="text" name="security_question" required>
+            <p class="warning">For Security Purposes</p> <!-- Added warning class -->
+            <label for="teacher">Who is your Objor Subject Teacher?</label>
+            <input type="text" name="teacher" required>
         </div>
 
         <button type="submit">Submit</button>
     </form>
 
-    <p>Remember your password? <a href="{% url 'login' %}">Log In here</a></p>
+    <p>Remember your password? <a href="{% url 'login' %}">Log in here</a></p>
 
 </div>
 
