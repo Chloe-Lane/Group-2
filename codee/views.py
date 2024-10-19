@@ -4,13 +4,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from PIL import Image, ImageDraw, ImageFont
 from django.http import HttpResponse
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.utils.encoding import force_str, force_bytes
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
-from django.core.mail import send_mail
-from twilio.rest import Client
-from django.conf import settings
+
 
 
 
@@ -112,117 +107,11 @@ def page_view(request, first_name, last_name):
 import time
 timestamp = int(time.time())
 
+def forgot_password(request):
+    if request.method == 'POST':
+        # Handle form submission and security question verification here
+        pass
+    return render(request, 'auth/forgot.html')
+
 def forgot_password_view(request):
-    return render(request, 'password/forgot_password.html')
-
-logger = logging.getLogger(__name__)
-# Your existing imports...
-
-def send_reset_code(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        phone = request.POST['phone']  # Get the cellphone number
-        user = User.objects.filter(email=email).first()
-
-        if user and user.profile.phone == phone:  # Assuming you have a profile model linked to the User
-            # Generate a reset code
-            reset_code = random.randint(100000, 999999)
-
-            # Save the reset code in the session or database for verification later
-            request.session['reset_code'] = reset_code
-
-            # Send SMS (you'll need an SMS gateway service)
-            try:
-                # Use an SMS API service to send the reset code
-                send_sms(phone, f'Your password reset code is: {reset_code}')
-                messages.success(request, 'A password reset code has been sent to your cellphone.')
-            except Exception as e:
-                logger.error(f"Failed to send SMS: {e}")
-                messages.error(request, 'Failed to send SMS. Please try again later.')
-            return redirect('login')
-        else:
-            messages.error(request, 'Email address or cellphone number not found.')
-            return render(request, 'password/forgot_password.html')
-
-    return render(request, 'password/forgot_password.html')
-
-
-def reset_password(request):
-    if request.method == 'POST':
-        entered_code = request.POST.get('reset_code')
-        new_password = request.POST.get('new_password')
-
-        if entered_code == str(request.session.get('reset_code')):  # Check if code matches
-            user = User.objects.get(phone=request.POST['phone'])  # Retrieve user by phone if needed
-            user.set_password(new_password)
-            user.save()
-            messages.success(request, 'Your password has been reset successfully.')
-            return redirect('login')
-        else:
-            messages.error(request, 'Invalid reset code.')
-
-    return render(request, 'password/reset_password.html')
-
-def send_sms(to, message):
-    # Your Twilio account credentials
-    account_sid = 'AC2b73693c4aaa9c7999405b793a7f49b9'
-    auth_token = 'cd5eccb364449075bb4ead648b156801'
-    client = Client(account_sid, auth_token)
-
-    client.messages.create(
-        body=message,
-        from_='0985088850',  # Your Twilio phone number
-        to=to
-    )
-
-def verify_code(request):
-    if request.method == 'POST':
-        phone_number = request.session.get('phone_number')  # Get the stored phone number
-        verification_code = request.POST['code']  # Code entered by the user
-
-        # Initialize the Twilio client
-        account_sid = 'AC2b73693c4aaa9c7999405b793a7f49b9'
-        auth_token = 'cd5eccb364449075bb4ead648b156801'  # Replace with your actual auth token
-        client = Client(account_sid, auth_token)
-
-        # Send a verification code to the user's phone number
-        verification = client.verify.v2.services('VA26390ea7fd9651fc23d9409f86842bb6') \
-            .verifications \
-            .create(to=+639850885850, channel='sms')
-
-        # Check if the verification code matches
-        verification_check = client.verify.v2.services('VA26390ea7fd9651fc23d9409f86842bb6') \
-            .verification_checks \
-            .create(to=+639850885850, code=verification_code)
-
-        if verification_check.status == 'approved':
-            messages.success(request, 'Verification successful! You can now reset your password.')
-            return redirect('reset_password')  # Redirect to your password reset page
-        else:
-            messages.error(request, 'Invalid verification code. Please try again.')
-
-    return render(request, 'password/verify_code.html')
-
-
-def send_verification_code(request):
-    if request.method == 'POST':
-        phone_number = request.POST['phone_number']  # User's phone number input
-
-        # Create a Twilio client
-        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-
-        # Send verification code
-        try:
-            verification = client.verify.v2.services(settings.TWILIO_VERIFY_SERVICE_SID) \
-                .verifications \
-                .create(to=+639850885850, channel='sms')
-
-            # Optional: Store the phone number in the session for later use
-            request.session['phone_number'] = phone_number
-            messages.success(request, 'A verification code has been sent to your phone.')
-            return redirect('verify_code')  # Redirect to a page for code verification
-        except Exception as e:
-            messages.error(request, f'Failed to send verification code: {e}')
-            return render(request, 'password/forgot_password.html')
-
-    return render(request, 'password/forgot_password.html')
+    return render(request, 'auth/forgot.html')  # Siguraduhin na tama ang pangalan ng template

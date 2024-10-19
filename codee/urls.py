@@ -20,20 +20,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import (
-    home,
-    login_view,
-    custom_logout,
-    page_view,
-    generate_captcha,
-    forgot_password_view,
-    send_reset_code,
-    reset_password,
-    send_verification_code,
-    verify_code,
-)
 from .views import *
-from django.contrib.auth import views as auth_views
+from . import views
 
 # Import View
 
@@ -48,13 +36,10 @@ urlpatterns = [
     path('logout/', custom_logout, name='logout'),
     path('captcha/', include('captcha.urls')),
     path('generate_captcha/', generate_captcha, name='generate_captcha'),
-    path('forgot-password/', forgot_password_view, name='forgot_password'),
-    path('send-reset-code/', send_reset_code, name='send_reset_code'),
-    path('reset-password/<uidb64>/<token>/', reset_password, name='reset_password'),
-    path('forgot-password/', send_reset_code, name='send_reset_code'),
-    path('send-verification-code/', send_verification_code, name='send_verification_code'),
-    path('verify-code/', verify_code, name='verify_code'),
+    path('forgot_password/', views.forgot_password, name='forgot_password'),
+
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
