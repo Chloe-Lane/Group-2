@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
     <style>
+        /* Reuse styles from login.html */
         body {
             display: flex;
             justify-content: center;
@@ -22,21 +23,25 @@
             text-align: center;
         }
         h2 {
+            text-align: left;
             color: black;
         }
         form {
             margin-top: 20px;
         }
         .form-group {
-            margin-bottom: 10px;
-            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
         }
         label {
-            display: block;
-            margin-bottom: 5px;
+            flex: 1;
+            margin-right: 10px;
+            text-align: left;
         }
         input {
-            width: 95%;
+            flex: 4;
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 3px;
@@ -68,13 +73,17 @@
 <div class="container">
     <h2>Forgot Password</h2>
 
-    <form method="POST" action="{% url 'send_verification_code' %}">
+    <form method="POST" action="{% url 'forgot_password' %}">
         {% csrf_token %}
-        <label for="phone_number">Enter your phone number:</label>
-        <input type="text" name="phone_number" required>
-        <button type="submit">Send Verification Code</button>
+        <div class="form-group">
+            <label for="security-question">Who is your Objor Subject Teacher?</label>
+            <input type="text" name="security_question" required>
+        </div>
+
+        <button type="submit">Submit</button>
     </form>
-    <p><a href="{% url 'login' %}">Back to Login</a></p>
+
+    <p>Remember your password? <a href="{% url 'login' %}">Log In here</a></p>
 
 </div>
 
